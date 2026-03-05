@@ -56,6 +56,42 @@ int LRU(int k, int m, vector<int> &requests) {
     return misses;
 }
 
+int OPTFF(int k, int m, vector<int> &requests) {
+    const int INF = 1e9;
+    vector<int> nextPos(m, INF);
+    unordered_map<int, int> lastSeen;
+    for (int i = m - 1; i >= 0; i--) {
+        int id = requests[i];
+        auto it = lastSeen.find(id);
+        nextPos[i] = (it == lastSeen.end()) ? INF : it->second;
+        lastSeen[id] = i;
+    }
+    unordered_map<int, int> cacheNext;
+    set<pair<int,int>> order;
+    int misses = 0;
+    for (int i = 0; i < m; i++) {
+        int id = requests[i];
+        int next = nextPos[i];
+        auto it = cacheNext.find(id);
+        if (it != cacheNext.end()) {
+            order.erase({it->second, id});
+            it->second = next;
+            order.insert({next, id});
+        } else {
+            if (cacheNext.size() == k) {
+                auto evIt = prev(order.end());
+                int evictId = evIt->second;
+                order.erase(evIt);
+                cacheNext.erase(evictId);
+            }
+            cacheNext[id] = next;
+            order.insert({next, id});
+            misses++;
+        }
+    }
+    return misses;
+}
+
 int main() {
     int k, m;
     cin >> k >> m;
