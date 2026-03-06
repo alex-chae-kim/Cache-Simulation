@@ -112,9 +112,12 @@ int main() {
 
     int fifoMisses = FIFO(k, m, requests);
     int lruMisses = LRU(k, m, requests);
+    int optffMisses = OPTFF(k, m, requests);
 
 
-    printf("FIFO  : %d", fifoMisses);
+    printf("FIFO  : %d\n", fifoMisses);
+    printf("LRU   : %d\n", lruMisses);
+    printf("OPTFF : %d", optffMisses);
 
     return 0;
 }
